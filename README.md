@@ -7,15 +7,23 @@ The idea is to write markdown that gets translated to Jasmine `describe` and
 would become a single `it`, we make use of markdown hierarchy to separate one
 test from another and to give the `it` (and `describe` blocks names).
 
-Below I've added this markdown structure (which includes the main header above):
+This README.md has this markdown structure (which includes the main header above):
+
+    # literate-jasmine
+    ## Mathematices
+    ### add can add numbers (level 3 header)
+    ### add can add numbers
+    ## Strings
+    ### appending works with +
+
+Which is parsed into a tree:
 
     literate-jasmine
-        Mathematices (level 2 header)
-           add can add numbers (level 3 header)
-              code blocks which can be interspersed with comments
-           add can add numbers
-        Strings
-          appending works with +
+      Mathematices
+        add can add numbers (level 3 header)
+        add can add numbers
+      Strings
+        appending works with +
 
 This will be parsed to:
 
