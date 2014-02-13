@@ -7,10 +7,42 @@ The idea is to write markdown that gets translated to Jasmine `describe` and
 would become a single `it`, we make use of markdown hierarchy to separate one
 test from another and to give the `it` (and `describe` blocks names).
 
-Below, I'll create a `describe` named mathematics with an `it` block named add
-can add numbers.
+Below I've added this markdown structure (which includes the main header above):
 
-## mathematics
+literate-jasmine
+    Mathematices (level 2 header)
+       add can add numbers (level 3 header)
+          code blocks which can be interspersed with comments
+       add can add numbers
+    Strings
+      appending works with +
+
+This will be parsed to:
+
+    describe('literate-jasmine', function() {
+      describe('Mathematics', function() {
+        it('add can add numbers', function() {
+          // test code
+        });
+        it('can divide numbers', function() {
+          // test code
+        });
+      });
+      describe('Strings', function() {
+        it('appending works with +', function() {
+          // test code
+        });
+      });
+    });
+
+To actually do the parsing (assuming you ran `npm install -g literate-jasmine`):
+
+    literate-jasmine README.md
+
+Which will create README_spec.js with the parsed contents. If you're working on
+this project, simply run ./bin/literate-jasmine instead.
+
+## Mathematics
 ### add can add numbers
 
     var a = 1,
@@ -29,7 +61,7 @@ And a comment here doesn't break things:
 
     expect(a/b).toBe(3);
 
-## strings
+## Strings
 ### appending works with +
 
     var text = "abc";

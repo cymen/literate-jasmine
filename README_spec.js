@@ -1,5 +1,5 @@
-describe("literate-jasmine", function() {
-  describe("mathematics", function() {
+describe("literate-jasmine ", function() {
+  describe("Mathematics", function() {
     it("add can add numbers", function() {
       var a = 1,
           b = 2;
@@ -19,7 +19,7 @@ describe("literate-jasmine", function() {
       expect(text + "d").toBe("abcd");
     });
   });
-  describe("strings", function() {
+  describe("Strings", function() {
     it("appending works with +", function() {
       var text = "abc";
       
