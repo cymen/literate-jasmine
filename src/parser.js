@@ -55,8 +55,19 @@ parser = {
     var node = tree[offset],
         it = {
           name: node[2]
-        },
-        code_blocks = [];
+        };
+
+    it.code = parser.parseCodeBlocks(tree, offset + 1);
+
+    it.fn = function() {
+      eval(it.code);
+    };
+
+    return it;
+  },
+
+  parseCodeBlocks: function(tree, offset) {
+    var code_blocks = [];
 
     while (true) {
       offset += 1;
@@ -71,13 +82,7 @@ parser = {
       }
     }
 
-    it.code = code_blocks.join('\n');
-
-    it.fn = function() {
-      eval(it.code);
-    };
-
-    return it;
+    return code_blocks.join('\n');
   },
 
   validNode: function(node, type, level) {

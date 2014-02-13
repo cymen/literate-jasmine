@@ -2,6 +2,58 @@ var parser = require('../src/parser'),
     markdown = require('markdown').markdown;
 
 describe('parser', function() {
+  describe('code block(s)', function() {
+    it('parses out the code block', function() {
+        var text = [
+          '',
+          '    console.log("hi!");',
+          ''
+        ].join('\n');
+        var tree = markdown.parse(text);
+
+        var code = parser.parseCodeBlocks(tree, 0);
+
+       expect(code).toContain('console.log("hi!");');
+    });
+
+    it('parses out the comments between code blocks', function() {
+        var text = [
+          '',
+          '    var i = 10;',
+          '',
+          'And now set x to 20:',
+          '',
+          '    var x = 20;',
+          ''
+        ].join('\n');
+        var tree = markdown.parse(text);
+
+        var code = parser.parseCodeBlocks(tree, 0);
+
+       expect(code).toContain('var i = 10;');
+       expect(code).toContain('var x = 20;');
+       expect(code).not.toContain('And now set x to 20:');
+    });
+
+    it('stops looking for additional code blocks when it hits a header', function() {
+        var text = [
+          '',
+          '    var i = 10;',
+          '',
+          '### And now for something different:',
+          '',
+          '    var answer = 42;'
+        ].join('\n');
+        var tree = markdown.parse(text);
+
+        var code = parser.parseCodeBlocks(tree, 0);
+
+       expect(code).toContain('var i = 10;');
+       expect(code).not.toContain('var answer = 42;');
+       expect(code).not.toContain('And now for something different');
+    });
+  });
+
   describe('it block', function() {
     var text,
         tree;
