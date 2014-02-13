@@ -1,4 +1,6 @@
-# literate-jasmine
+# literate-jasmine [![Build Status](https://travis-ci.org/cymen/literate-jasmine.png?branch=master)](https://travis-ci.org/cymen/literate-jasmine)
+
+[![NPM](https://nodei.co/npm/literate-jasmine.png?downloads=true&stars=true)](https://npmjs.org/package/literate-jasmine)
 
 The idea is to write markdown that gets translated to Jasmine `describe` and
 `it` blocks. Because we want to be able to annotate in between parts of what
