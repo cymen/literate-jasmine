@@ -39,8 +39,8 @@ To actually do the parsing (assuming you ran `npm install -g literate-jasmine`):
 
     literate-jasmine README.md
 
-Which will create README_spec.js with the parsed contents. If you're working on
-this project, simply run ./bin/literate-jasmine instead.
+Which will create `README_spec.js` with the parsed contents. If you're working on
+this project, simply run `./bin/literate-jasmine` instead.
 
 ## Mathematics
 ### add can add numbers
