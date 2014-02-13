@@ -20,18 +20,18 @@ var indentCode = function(lines, numberOfSpaces) {
 module.exports = function(filename, parserOutput) {
   var lines = [];
 
-  lines.push('describe("' + parserOutput.name + '", function() {');
+  lines.push('describe("' + parserOutput.name + '", function() {\n');
 
   parserOutput.describes.forEach(function(describe) {
-    lines.push(indentLine('describe("' + describe.name + '", function() {', 2));
+    lines.push(indentLine('describe("' + describe.name + '", function() {\n', 2));
 
     describe.it.forEach(function(it) {
       lines.push(indentLine('it("' + it.name + '", function() {', 4));
       lines.push(indentCode(it.code, 6));
-      lines.push(indentLine('});', 4));
+      lines.push(indentLine('});\n', 4));
     });
 
-    lines.push(indentLine('});', 2));
+    lines.push(indentLine('});\n', 2));
   });
 
   lines.push('});');
