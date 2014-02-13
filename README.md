@@ -43,12 +43,12 @@ Which is then written to disk as `FILENAME_spec.js` (so `README_spec.js`):
       });
     });
 
-To actually do the parsing (assuming you ran `npm install -g literate-jasmine`):
+The command `literate-jasmine` is used to convert the markdown to JavaScript
+(assuming you ran `npm install -g literate-jasmine`):
 
     literate-jasmine README.md
 
-Which will create `README_spec.js` with the parsed contents. If you're working on
-this project, run `./bin/literate-jasmine` instead.
+(If you're working on this project, run `./bin/literate-jasmine` instead.)
 
 ## Mathematics
 ### add can add numbers
