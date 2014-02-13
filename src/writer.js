@@ -22,7 +22,7 @@ module.exports = function(filename, parserOutput) {
     lines.push(indentLine('describe("' + describe.name + '", function() {', 2));
     describe.it.forEach(function(it) {
       lines.push(indentLine('it("' + it.name + '", function() {', 4));
-      lines.push(indentCode(it.code, 4));
+      lines.push(indentCode(it.code, 6));
       lines.push(indentLine('});', 4));
     });
     lines.push(indentLine('});', 2));
