@@ -42,13 +42,10 @@ block at the top of this describe (so right under "Mathematics").
 
     expect(text + "d").toBe("abcd");
 
-The idea is to write markdown that gets translated to Jasmine `describe` and
-`it` blocks. Because we want to be able to annotate in between parts of what
-would become a single `it`, we make use of markdown hierarchy to separate one
-test from another and to give the `it` (and `describe` blocks names).
 
-This README.md has a markdown structure (which includes the main header
-above and the other parts below) that is parsed into a tree:
+
+The file you are currently reading has a markdown structure (which includes
+the main header above and the other parts below) that is parsed into a tree:
 
 * literate-jasmine
   * Mathematices
@@ -59,7 +56,7 @@ above and the other parts below) that is parsed into a tree:
     * appending works with +
 
 Which is then written to disk as `FILENAME_spec.js`. Take a look at `README_spec.js`
-as an example -- it is generated using this README as input!
+as an example -- it is generated using this file (`README.md`) as input!
 
 The command `literate-jasmine` is used to convert the markdown to JavaScript
 (assuming you ran `npm install -g literate-jasmine`):
