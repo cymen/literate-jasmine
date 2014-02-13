@@ -25,7 +25,7 @@ Which is parsed into a tree:
       Strings
         appending works with +
 
-This will be parsed to:
+Which is then written to disk as `FILENAME_spec.js` (so `README_spec.js`):
 
     describe('literate-jasmine', function() {
       describe('Mathematics', function() {
