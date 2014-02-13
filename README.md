@@ -51,6 +51,15 @@ The command `literate-jasmine` is used to convert the markdown to JavaScript
 
 (If you're working on this project, run `./bin/literate-jasmine` instead.)
 
+Then run the jasmine tests:
+
+    > jasmine-node README_spec.js
+    1 2 3
+    ....
+
+    Finished in 0.006 seconds
+    4 tests, 4 assertions, 0 failures, 0 skipped
+
 ## Mathematics
 ### add can add numbers
 
