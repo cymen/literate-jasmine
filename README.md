@@ -26,7 +26,7 @@ as an example -- it is generated using this README as input!
 The command `literate-jasmine` is used to convert the markdown to JavaScript
 (assuming you ran `npm install -g literate-jasmine`):
 
-literate-jasmine README.md
+`literate-jasmine README.md`
 
 (If you're working on this project, run `./bin/literate-jasmine` instead.)
 
