@@ -8,5 +8,22 @@ describe("literate-jasmine", function() {
       
       expect(a + b).toBe(3);
     });
+    it("can divide numbers", function() {
+      var a = 6,
+          b = 2;
+      expect(a/b).toBe(3);
+    });
+    it("appending works with +", function() {
+      var text = "abc";
+      
+      expect(text + "d").toBe("abcd");
+    });
+  });
+  describe("strings", function() {
+    it("appending works with +", function() {
+      var text = "abc";
+      
+      expect(text + "d").toBe("abcd");
+    });
   });
 });

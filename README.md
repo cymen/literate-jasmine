@@ -17,3 +17,19 @@ can add numbers.
     console.log(a, b, a + b);
 
     expect(a + b).toBe(3);
+
+### can divide numbers
+
+    var a = 6,
+        b = 2;
+
+And a comment here doesn't break things:
+
+    expect(a/b).toBe(3);
+
+## strings
+### appending works with +
+
+    var text = "abc";
+
+    expect(text + "d").toBe("abcd");
