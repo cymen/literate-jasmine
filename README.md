@@ -1,8 +1,7 @@
 # literate-jasmine [![Build Status](https://travis-ci.org/cymen/literate-jasmine.png?branch=master)](https://travis-ci.org/cymen/literate-jasmine)
+[![NPM](https://nodei.co/npm/literate-jasmine.png?downloads=true&stars=true)](https://npmjs.org/package/literate-jasmine)
 
     var PI;
-
-[![NPM](https://nodei.co/npm/literate-jasmine.png?downloads=true&stars=true)](https://npmjs.org/package/literate-jasmine)
 
 The idea is to write markdown that gets translated to Jasmine `describe` and
 `it` blocks. Because we want to be able to annotate in between parts of what
@@ -34,7 +33,7 @@ Then run the jasmine tests: `jasmine-node README_spec.js`.
 
 Take a close look at how scope works for globals. In the Mathematics section below, we
 reference `PI` to reset it as a `beforeEach` so every test has `PI` reset to the correct
-value. The actual declaration of `PI` as a variable happens on the third line of this
+value. The actual declaration of `PI` as a variable happens on the fourth line of this
 README. The root describe treats any code blocks after it as global setup.
 
 ## Mathematics
