@@ -3,7 +3,9 @@
     "description": "write tests in markdown that are run using jasmine",
     "version": "0.0.1",
     "dependencies": {
-        "jasmine-node": "1.13.1"
+        "jasmine-node": "1.13.1",
+        "lodash": "2.4.1",
+        "markdown": "0.5.0"
     },
     "engines": {
         "node": ">=0.8"
@@ -20,6 +22,6 @@
         "url": "https://github.com/cymen/literate-jasmine"
     },
     "scripts": {
-        "test": "jasmine-node --forceexit src"
+        "test": "jasmine-node --forceexit spec"
     }
 }
