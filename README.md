@@ -29,19 +29,27 @@ Which is parsed into a tree:
 Which is then written to disk as `FILENAME_spec.js` (so `README_spec.js`):
 
     describe('literate-jasmine', function() {
+
       describe('Mathematics', function() {
+
         it('add can add numbers', function() {
           // test code
         });
+
         it('can divide numbers', function() {
           // test code
         });
+
       });
+
       describe('Strings', function() {
+
         it('appending works with +', function() {
           // test code
         });
+
       });
+
     });
 
 The command `literate-jasmine` is used to convert the markdown to JavaScript
