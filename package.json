@@ -2,6 +2,9 @@
     "name": "literate-jasmine",
     "description": "write tests in markdown that are parsed to specification files to run with jasmine-node",
     "version": "0.0.1",
+    "bin": {
+      "literate-jasmine": "./bin/literate-jasmine"
+    },
     "dependencies": {
         "jasmine-node": "1.13.1",
         "lodash": "2.4.1",
