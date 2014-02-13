@@ -3,9 +3,9 @@ describe("literate-jasmine ", function() {
     it("add can add numbers", function() {
       var a = 1,
           b = 2;
-      
+
       console.log(a, b, a + b);
-      
+
       expect(a + b).toBe(3);
     });
     it("can divide numbers", function() {
@@ -15,14 +15,14 @@ describe("literate-jasmine ", function() {
     });
     it("appending works with +", function() {
       var text = "abc";
-      
+
       expect(text + "d").toBe("abcd");
     });
   });
   describe("Strings", function() {
     it("appending works with +", function() {
       var text = "abc";
-      
+
       expect(text + "d").toBe("abcd");
     });
   });

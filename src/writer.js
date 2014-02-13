@@ -1,8 +1,10 @@
 var fs = require('fs');
 
 var indentLine = function(text, numberOfSpaces) {
-  for (var i=0; i < numberOfSpaces; i++) {
-    text = ' ' + text;
+  if (text.replace(/\s+/, '') !== '') {
+    for (var i=0; i < numberOfSpaces; i++) {
+      text = ' ' + text;
+    }
   }
   return text;
 };
