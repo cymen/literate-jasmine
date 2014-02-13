@@ -9,4 +9,5 @@ var fs = require('fs'),
 
 var input = fs.readFileSync(markdownFile, 'utf8');
 var parserOutput = parser.parse(input);
+
 writer(outputFile, parserOutput);
