@@ -1,6 +1,11 @@
 describe("literate-jasmine ", function() {
+  var PI;
 
   describe("Mathematics", function() {
+
+    beforeEach(function() {
+      PI = 22/7;
+    });
 
     it("add can add numbers", function() {
       var a = 1,
@@ -17,10 +22,12 @@ describe("literate-jasmine ", function() {
       expect(a/b).toBe(3);
     });
 
-    it("appending works with +", function() {
-      var text = "abc";
+    it("calculates the circumference of a circle", function() {
+      var circumference = function(radius) {
+        return 2 * PI * radius;
+      };
 
-      expect(text + "d").toBe("abcd");
+      expect(circumference(5)).toBe(2 * 22/7 * 5);
     });
 
   });

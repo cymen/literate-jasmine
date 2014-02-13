@@ -32,16 +32,15 @@ describe('writer', function() {
     });
   });
 
-  it('writes the root beforeEach out', function() {
+  it('writes the root global out', function() {
     var tree = {
       name: 'example',
-      beforeEach: 'var someVariable = 42;',
+      global: 'var someVariable = 42;',
       describes: []
     };
 
     writer('someFileName_spec.js', tree);
 
-    expect(fs.writeFileSync.mostRecentCall.args[1]).toContain('beforeEach');
     expect(fs.writeFileSync.mostRecentCall.args[1]).toContain('var someVariable = 42;');
   });
 

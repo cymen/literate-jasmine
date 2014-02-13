@@ -18,10 +18,7 @@ parser = {
       return;
     }
 
-    complete.beforeEach = parser.parseCodeBlocks(tree, 1);
-    complete.beforeEachFn = function() {
-      eval(complete.beforeEach);
-    };
+    complete.global = parser.parseCodeBlocks(tree, 1);
 
     for (var i=2; i < tree.length; i++) {
       var node = tree[i];
@@ -41,15 +38,12 @@ parser = {
         };
 
     describe.beforeEach = parser.parseCodeBlocks(tree, offset);
-    describe.beforeEachFn = function() {
-      eval(describe.beforeEach);
-    };
 
     while (true) {
       offset += 1;
       var child = tree[offset];
 
-      if (!child || child[0] === 'header' && child[1] < IT_LEVEL) {
+      if (!child || child[0] === 'header' && child[1].level < IT_LEVEL) {
         break;
       }
 
@@ -67,11 +61,7 @@ parser = {
           name: node[2]
         };
 
-    it.code = parser.parseCodeBlocks(tree, offset + 1);
-
-    it.fn = function() {
-      eval(it.code);
-    };
+    it.code = parser.parseCodeBlocks(tree, offset);
 
     return it;
   },

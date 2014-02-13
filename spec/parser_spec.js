@@ -85,21 +85,6 @@ describe('parser', function() {
 
         expect(it.code).toBe('var x = 10;\nconsole.log("x", x);\nexpect(x).toBe(10);');
     });
-
-    it('adds the code into a function for calling', function() {
-        var it = parser.parseIt(tree, 1);
-
-        expect(typeof it.fn).toBe('function');
-    });
-
-    it('has a function that we can actually call', function() {
-        spyOn(console, 'log');
-        var it = parser.parseIt(tree, 1);
-
-        it.fn();
-
-        expect(console.log).toHaveBeenCalledWith('x', 10);
-    });
   });
 
   describe('describe block', function() {
@@ -136,24 +121,12 @@ describe('parser', function() {
         var describe = parser.parseDescribe(tree, 1);
 
         expect(describe.it.length).toBe(1);
-        expect(typeof describe.it[0].fn).toBe('function');
     });
 
     it('parses out any code blocks before the it as a beforeEach', function() {
         var describe = parser.parseDescribe(tree, 1);
 
         expect(describe.beforeEach).toContain('someGlobal = 42;');
-    });
-
-    it('adds a beforeEachFn which is the function to be run as a beforeEach', function() {
-        var describe = parser.parseDescribe(tree, 1);
-        someGlobal = 21; // intentionally not using var so we hit global!
-
-        expect(someGlobal).toBe(21);
-
-        describe.beforeEachFn();
-
-        expect(someGlobal).toBe(42);
     });
   });
 
@@ -201,15 +174,7 @@ describe('parser', function() {
     it('parses any code blocks before first header/describe as beforeEach', function() {
         var result = parser.parse(text);
 
-        expect(result.beforeEach).toContain('someGlobal = 21;');
-    });
-
-    it('puts the parsed beforeEach as beforeEachFn on the returned object', function() {
-        var result = parser.parse(text);
-
-        result.beforeEachFn();
-
-        expect(someOtherRealGlobal).toBe(500);
+        expect(result.global).toContain('someGlobal = 21;');
     });
   });
 });

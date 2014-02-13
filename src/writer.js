@@ -20,12 +20,10 @@ var indentCode = function(lines, numberOfSpaces) {
 module.exports = function(filename, parserOutput) {
   var lines = [];
 
-  lines.push('describe("' + parserOutput.name + '", function() {\n');
+  lines.push('describe("' + parserOutput.name + '", function() {');
 
-  if (parserOutput.beforeEach) {
-    lines.push(indentLine('beforeEach(function() {', 2));
-    lines.push(indentCode(parserOutput.beforeEach, 4));
-    lines.push(indentLine('});', 2));
+  if (parserOutput.global) {
+    lines.push(indentCode(parserOutput.global + '\n', 2));
   }
 
   parserOutput.describes.forEach(function(describe) {
@@ -34,7 +32,7 @@ module.exports = function(filename, parserOutput) {
     if (describe.beforeEach) {
       lines.push(indentLine('beforeEach(function() {', 4));
       lines.push(indentCode(describe.beforeEach, 6));
-      lines.push(indentLine('});', 4));
+      lines.push(indentLine('});\n', 4));
     }
 
     describe.it.forEach(function(it) {
