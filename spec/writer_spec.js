@@ -31,4 +31,36 @@ describe('writer', function() {
       expect(fs.writeFileSync.mostRecentCall.args[1]).toContain(code_line);
     });
   });
+
+  it('writes the root beforeEach out', function() {
+    var tree = {
+      name: 'example',
+      beforeEach: 'var someVariable = 42;',
+      describes: []
+    };
+
+    writer('someFileName_spec.js', tree);
+
+    expect(fs.writeFileSync.mostRecentCall.args[1]).toContain('beforeEach');
+    expect(fs.writeFileSync.mostRecentCall.args[1]).toContain('var someVariable = 42;');
+  });
+
+  it('writes the describe beforeEach out', function() {
+    var tree = {
+      name: 'example',
+      describes: [{
+        name: 'the describe name',
+        beforeEach: 'someVariable = 404;',
+        it: [{
+          name: 'the it name',
+          code: 'var example = "example";\nexpect(example).toBe("example");\n'
+        }]
+      }]
+    };
+
+    writer('someFileName_spec.js', tree);
+
+    expect(fs.writeFileSync.mostRecentCall.args[1]).toContain('beforeEach');
+    expect(fs.writeFileSync.mostRecentCall.args[1]).toContain('someVariable = 404;');
+  });
 });
