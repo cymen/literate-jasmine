@@ -64,7 +64,7 @@ also runs `jasmine-node` to execute the tests:
 
 `literate-jasmine README.md`
 
-![screen shot of running literate-jasmine on this README.md](run.png)
+![screen shot of running literate-jasmine on this README.md](//github.com/cymen/literate-jasmine/blob/master/run.png)
 
 (If you're working on this project, run `./bin/literate-jasmine` instead.)
 
