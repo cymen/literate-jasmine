@@ -24,6 +24,6 @@
         "url": "https://github.com/cymen/literate-jasmine"
     },
     "scripts": {
-        "test": "jasmine-node --forceexit spec"
+        "test": "jasmine-node --forceexit spec && ./bin/literate-jasmine README.md"
     }
 }
