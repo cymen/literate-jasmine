@@ -59,16 +59,14 @@ Which is then written to disk as `FILENAME_spec.js`. Take a look at `README_spec
 as an example -- it is generated using this file (`README.md`) as input!
 
 The command `literate-jasmine` is used to convert the markdown to JavaScript
-(assuming you ran `npm install -g literate-jasmine`):
+(assuming you ran `npm install -g literate-jasmine`). After conversion, it
+also runs `jasmine-node` to execute the tests:
 
 `literate-jasmine README.md`
 
 (If you're working on this project, run `./bin/literate-jasmine` instead.)
 
-Then run the jasmine tests: `jasmine-node README_spec.js`.
-
 Take a close look at how scope works for globals. In the Mathematics section below, we
 reference `PI` to reset it as a `beforeEach` so every test has `PI` reset to the correct
 value. The actual declaration of `PI` as a variable happens on the fourth line of this
 README. The root describe treats any code blocks after it as global setup.
-
