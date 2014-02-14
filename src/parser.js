@@ -20,9 +20,7 @@ parser = {
     }
 
     complete.global = parser.parseCodeBlocks(tree, 1);
-    complete.globalFn = function(then) {
-      eval(complete.global);
-    };
+    complete.globalFn = new Function(complete.global);
 
     for (var i=2; i < tree.length; i++) {
       var node = tree[i];
@@ -52,9 +50,7 @@ parser = {
         };
 
     parsedDescribe.beforeEach = parser.parseCodeBlocks(tree, offset);
-    parsedDescribe.beforeEachFn = function() {
-      eval(parsedDescribe.beforeEach);
-    };
+    parsedDescribe.beforeEachFn = new Function(parsedDescribe.beforeEach);
 
     while (true) {
       offset += 1;
@@ -88,9 +84,7 @@ parser = {
 
     it.code = parser.parseCodeBlocks(tree, offset);
 
-    it.fn = function() {
-      eval(it.code);
-    };
+    it.fn = new Function(it.code);
 
     return it;
   },
