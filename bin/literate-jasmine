@@ -3,6 +3,7 @@
 var fs = require('fs'),
     path = require('path'),
     parser = require(path.join(__dirname,'../src/parser')),
+    spawn = require('child_process').spawn,
     writer = require(path.join(__dirname,'../src/writer'));
     markdownFile = process.argv[2],
     outputFile = markdownFile.replace(/\.md/i, '_spec.js');
@@ -10,4 +11,20 @@ var fs = require('fs'),
 var input = fs.readFileSync(markdownFile, 'utf8');
 var parserOutput = parser.parse(input);
 
+console.log('Writing Jasmine tests out to ' + outputFile + '...');
 writer(outputFile, parserOutput);
+
+console.log('Running tests with jasmine-node...');
+var jasmineNode = spawn('jasmine-node', [outputFile, '--verbose']);
+
+jasmineNode.stdout.on('data', function(data) {
+  console.log(data.toString());
+});
+
+jasmineNode.stderr.on('data', function(data) {
+  console.log(data.toString());
+});
+
+jasmineNode.on('exit', function(code) {
+  process.exit(code);
+});

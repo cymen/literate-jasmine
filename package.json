@@ -7,7 +7,6 @@
     },
     "dependencies": {
         "jasmine-node": "1.13.1",
-        "lodash": "2.4.1",
         "markdown": "0.5.0"
     },
     "engines": {

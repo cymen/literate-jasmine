@@ -1,5 +1,4 @@
-var lodash = require('lodash'),
-    markdown = require('markdown').markdown,
+var markdown = require('markdown').markdown,
     ROOT_LEVEL = 1,
     DESCRIBE_LEVEL = 2,
     IT_LEVEL = 3,
