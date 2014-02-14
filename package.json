@@ -1,7 +1,7 @@
 {
     "name": "literate-jasmine",
-    "description": "write tests in markdown that are parsed and then run directly in jasmine",
-    "version": "0.0.16",
+    "description": "write tests in markdown that are parsed and then run using jasmine",
+    "version": "0.0.17",
     "bin": {
       "literate-jasmine": "./bin/literate-jasmine"
     },
