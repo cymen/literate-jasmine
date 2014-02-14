@@ -60,7 +60,7 @@ tests and then run them.
 
 `literate-jasmine README.md`
 
-![screen shot of running literate-jasmine on this README.md](run.png)
+![screen shot of running literate-jasmine on this README.md](console.png)
 
 (If you're working on this project, run `./bin/literate-jasmine` instead.)
 
