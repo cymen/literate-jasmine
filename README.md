@@ -64,6 +64,8 @@ also runs `jasmine-node` to execute the tests:
 
 `literate-jasmine README.md`
 
+![screen shot of running literate-jasmine on this README.md](run.png)
+
 (If you're working on this project, run `./bin/literate-jasmine` instead.)
 
 Take a close look at how scope works for globals. In the Mathematics section below, we
