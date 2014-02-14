@@ -55,12 +55,8 @@ the main header above and the other parts below) that is parsed into a tree:
   * Strings
     * appending works with +
 
-Which is then written to disk as `FILENAME_spec.js`. Take a look at `README_spec.js`
-as an example -- it is generated using this file (`README.md`) as input!
-
-The command `literate-jasmine` is used to convert the markdown to JavaScript
-(assuming you ran `npm install -g literate-jasmine`). After conversion, it
-also runs `jasmine-node` to execute the tests:
+Which is then uses the Jasmine `describe`, `it` and `beforeEach` to setup the
+tests and then run them.
 
 `literate-jasmine README.md`
 

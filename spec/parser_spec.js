@@ -75,15 +75,24 @@ describe('parser', function() {
     });
 
     it('parses out the name', function() {
-        var it = parser.parseIt(tree, 1);
+        var parsedIt = parser.parseIt(tree, 1);
 
-        expect(it.name).toBe('it 1');
+        expect(parsedIt.name).toBe('it 1');
     });
 
     it('parses out the code', function() {
-        var it = parser.parseIt(tree, 1);
+        var parsedIt = parser.parseIt(tree, 1);
 
-        expect(it.code).toBe('var x = 10;\nconsole.log("x", x);\nexpect(x).toBe(10);');
+        expect(parsedIt.code).toBe('var x = 10;\nconsole.log("x", x);\nexpect(x).toBe(10);');
+    });
+
+    it('adds a function call to run the code', function() {
+        spyOn(console, 'log');
+        var parsedIt = parser.parseIt(tree, 1);
+
+        parsedIt.fn();
+
+        expect(console.log).toHaveBeenCalledWith('x', 10);
     });
   });
 
@@ -112,21 +121,39 @@ describe('parser', function() {
     });
 
     it('parses the describe name', function() {
-        var describe = parser.parseDescribe(tree, 1);
+        var parsedDescribe = parser.parseDescribe(tree, 1);
 
-        expect(describe.name).toBe('can set a variable to a number');
+        expect(parsedDescribe.name).toBe('can set a variable to a number');
     });
 
     it('parsers out the it blocks', function() {
-        var describe = parser.parseDescribe(tree, 1);
+        var parsedDescribe = parser.parseDescribe(tree, 1);
 
-        expect(describe.it.length).toBe(1);
+        expect(parsedDescribe.it.length).toBe(1);
     });
 
     it('parses out any code blocks before the it as a beforeEach', function() {
-        var describe = parser.parseDescribe(tree, 1);
+        var parsedDescribe = parser.parseDescribe(tree, 1);
 
-        expect(describe.beforeEach).toContain('someGlobal = 42;');
+        expect(parsedDescribe.beforeEach).toContain('someGlobal = 42;');
+    });
+
+    it('adds a function call to run the beforeEach', function() {
+        var parsedDescribe = parser.parseDescribe(tree, 1);
+        someGlobal = 21;
+
+        parsedDescribe.beforeEachFn();
+
+        expect(someGlobal).toBe(42);
+    });
+
+    it('adds a function call to run each it within the describe', function() {
+        var itSpy = jasmine.createSpy('it'),
+            parsedDescribe = parser.parseDescribe(tree, 1);
+
+        parsedDescribe.fn(itSpy);
+
+        expect(itSpy).toHaveBeenCalledWith('it 1', jasmine.any(Function));
     });
   });
 
@@ -175,6 +202,27 @@ describe('parser', function() {
         var result = parser.parse(text);
 
         expect(result.global).toContain('someGlobal = 21;');
+    });
+
+    it('adds a function to call for global setup', function() {
+        someOtherRealGlobal = -5;
+        var result = parser.parse(text);
+
+        result.globalFn();
+
+        expect(someOtherRealGlobal).toBe(500);
+    });
+
+    it('adds a function call to run each describe within the root describe', function() {
+        var describeSpy = jasmine.createSpy('describe').andCallFake(function(name, describeFn) {
+            describeFn(function() {});
+        });
+        var result = parser.parse(text);
+
+        result.fn(describeSpy);
+
+        expect(describeSpy).toHaveBeenCalledWith('my title here', jasmine.any(Function));
+        expect(describeSpy).toHaveBeenCalledWith('can set a variable to a number', jasmine.any(Function));
     });
   });
 });

@@ -1,3 +1,5 @@
+require('jasmine-node');
+
 var markdown = require('markdown').markdown,
     ROOT_LEVEL = 1,
     DESCRIBE_LEVEL = 2,
@@ -18,6 +20,9 @@ parser = {
     }
 
     complete.global = parser.parseCodeBlocks(tree, 1);
+    complete.globalFn = function(then) {
+      eval(complete.global);
+    };
 
     for (var i=2; i < tree.length; i++) {
       var node = tree[i];
@@ -26,17 +31,30 @@ parser = {
       }
     }
 
+    complete.fn = function(describeFn) {
+      describeFn = describeFn || describe;
+      complete.globalFn();
+      describeFn(complete.name, function() {
+        complete.describes.forEach(function(parsedDescribe) {
+          describeFn(parsedDescribe.name, parsedDescribe.fn);
+        });
+      });
+    };
+
     return complete;
   },
 
   parseDescribe: function(tree, offset) {
     var node = tree[offset],
-        describe = {
+        parsedDescribe = {
           name: node[2],
           it: []
         };
 
-    describe.beforeEach = parser.parseCodeBlocks(tree, offset);
+    parsedDescribe.beforeEach = parser.parseCodeBlocks(tree, offset);
+    parsedDescribe.beforeEachFn = function() {
+      eval(parsedDescribe.beforeEach);
+    };
 
     while (true) {
       offset += 1;
@@ -47,11 +65,19 @@ parser = {
       }
 
       if (parser.validNode(child, 'header', IT_LEVEL)) {
-        describe.it.push(parser.parseIt(tree, offset));
+        parsedDescribe.it.push(parser.parseIt(tree, offset));
       }
     }
 
-    return describe;
+    parsedDescribe.fn = function(itFn) {
+      itFn = itFn || it;
+      beforeEach(parsedDescribe.beforeEachFn);
+      parsedDescribe.it.forEach(function(parsedIt) {
+        itFn(parsedIt.name, parsedIt.fn);
+      });
+    };
+
+    return parsedDescribe;
   },
 
   parseIt: function(tree, offset) {
@@ -61,6 +87,10 @@ parser = {
         };
 
     it.code = parser.parseCodeBlocks(tree, offset);
+
+    it.fn = function() {
+      eval(it.code);
+    };
 
     return it;
   },
