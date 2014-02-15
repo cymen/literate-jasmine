@@ -6,12 +6,28 @@ var markdown = require('markdown').markdown,
     IT_LEVEL = 3,
     parser;
 
+var isHeader = function(node) {
+  return node[0] === 'header';
+};
+
+var isCodeBlock = function(node) {
+  return node[0] === 'code_block';
+};
+
+var getName = function(node) {
+  return node[2];
+};
+
+var getLevel = function(node) {
+  return node[1].level;
+};
+
 parser = {
   parse: function(text) {
     var tree = markdown.parse(text),
         root = tree[1],
         complete = {
-          name: root[2],
+          name: getName(root),
           describes: []
         };
 
@@ -45,7 +61,7 @@ parser = {
   parseDescribe: function(tree, offset) {
     var node = tree[offset],
         parsedDescribe = {
-          name: node[2],
+          name: getName(node),
           it: []
         };
 
@@ -56,7 +72,7 @@ parser = {
       offset += 1;
       var child = tree[offset];
 
-      if (!child || child[0] === 'header' && child[1].level < IT_LEVEL) {
+      if (!child || isHeader(child) && getLevel(child) < IT_LEVEL) {
         break;
       }
 
@@ -79,7 +95,7 @@ parser = {
   parseIt: function(tree, offset) {
     var node = tree[offset],
         it = {
-          name: node[2]
+          name: getName(node)
         };
 
     it.code = parser.parseCodeBlocks(tree, offset);
@@ -96,11 +112,11 @@ parser = {
       offset += 1;
       var child = tree[offset];
 
-      if (!child || child[0] === 'header') {
+      if (!child || isHeader(child)) {
         break;
       }
 
-      if (child[0] === 'code_block') {
+      if (isCodeBlock(child)) {
         code_blocks.push(child[1]);
       }
     }
