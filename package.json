@@ -7,7 +7,8 @@
     },
     "dependencies": {
         "jasmine-node": "1.13.1",
-        "markdown": "0.5.0"
+        "markdown": "0.5.0",
+        "stack-trace-parser": "0.0.6"
     },
     "engines": {
         "node": ">=0.8"

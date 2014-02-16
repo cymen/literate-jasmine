@@ -1,6 +1,7 @@
 require('jasmine-node');
 
 var markdown = require('markdown').markdown,
+    stackTraceParser = require('stack-trace-parser'),
     ROOT_LEVEL = 1,
     DESCRIBE_LEVEL = 2,
     IT_LEVEL = 3,
@@ -100,7 +101,19 @@ parser = {
 
     it.code = parser.parseCodeBlocks(tree, offset);
 
-    it.fn = new Function(it.code);
+    it.fn = function() {
+      try {
+        new Function(it.code)();
+      }
+      catch (exception) {
+        var parsedStackTrace = stackTraceParser.parse(exception);
+        if (parsedStackTrace[0].isEval) {
+          console.log(it.code);
+          console.log('Error in code at', parsedStackTrace[0].evalLineNumber + ':' + parsedStackTrace[0].evalColumnNumber);
+        }
+        throw exception;
+      }
+    }
 
     return it;
   },
