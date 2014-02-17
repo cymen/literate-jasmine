@@ -11,5 +11,5 @@ sinon.spy(console, 'log');
   setTimeout(function() {
     assert(console.log.calledWith('ReferenceError: zz is not defined'.red, 'thrown from', 'c'.red + ':'));
     assert(console.log.calledWith('c = 2 * zz;'.red));
-  }, 250);
+  }, 1000);
 })();
