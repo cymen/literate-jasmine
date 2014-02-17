@@ -24,12 +24,16 @@ var getLevel = function(node) {
   return node[1].level;
 };
 
+var makeFileNameRelative = function(fileName) {
+  return fileName.replace(process.cwd(), '.');
+};
+
 parser = {
   displayEvalException: function(exception, name, code) {
     var parsedStackTrace = stackTraceParser.parse(exception);
     if (parsedStackTrace[0].isEval) {
       console.log('\n');
-      console.log(exception.toString().red, 'thrown from', name.red + ':');
+      console.log(exception.toString().red, 'thrown from', name.red, 'in', makeFileNameRelative(parser.fileName).red + ':');
       console.log('. . . . .');
       var errorOnLineNumber = parsedStackTrace[0].evalLineNumber - 2;
       code.split('\n').forEach(function(line, index) {
@@ -42,7 +46,20 @@ parser = {
     }
   },
 
-  parse: function(text) {
+  run: function(name, code) {
+    return function() {
+      try {
+        return new Function(code)();
+      }
+      catch (exception) {
+        parser.displayEvalException(exception, name, code);
+        exception.message += ' (' + makeFileNameRelative(parser.fileName) + ')';
+        throw exception;
+      }
+    }
+  },
+
+  parse: function(text, fileName) {
     var tree = markdown.parse(text),
         root = tree[1],
         complete = {
@@ -50,20 +67,14 @@ parser = {
           describes: []
         };
 
+    this.fileName = fileName;
+
     if (!parser.validNode(root, 'header', ROOT_LEVEL)) {
       return;
     }
 
     complete.global = parser.parseCodeBlocks(tree, 1);
-    complete.globalFn = function() {
-      try {
-        return new Function(complete.global)();
-      }
-      catch (exception) {
-        parser.displayEvalException(exception, complete.name, complete.global);
-        throw exception;
-      }
-    }
+    complete.globalFn = parser.run(complete.name, complete.global);
 
     for (var i=2; i < tree.length; i++) {
       var node = tree[i];
@@ -93,15 +104,7 @@ parser = {
         };
 
     parsedDescribe.beforeEach = parser.parseCodeBlocks(tree, offset);
-    parsedDescribe.beforeEachFn = function() {
-      try {
-        return new Function(parsedDescribe.beforeEach)();
-      }
-      catch (exception) {
-        parser.displayEvalException(exception, parsedDescribe.name, parsedDescribe.beforeEach);
-        throw exception;
-      }
-    };
+    parsedDescribe.beforeEachFn = parser.run(parsedDescribe.name, parsedDescribe.beforeEach);
 
     while (true) {
       offset += 1;
@@ -134,16 +137,7 @@ parser = {
         };
 
     it.code = parser.parseCodeBlocks(tree, offset);
-
-    it.fn = function() {
-      try {
-        return new Function(it.code)();
-      }
-      catch (exception) {
-        parser.displayEvalException(exception, it.name, it.code);
-        throw exception;
-      }
-    };
+    it.fn = parser.run(it.name, it.code);
 
     return it;
   },

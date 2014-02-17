@@ -10,7 +10,7 @@ console.log('NOTE: Jasmine failure expected, watch for assertion failure!'.yello
   require('../bin/literate-jasmine');
 
   setTimeout(function() {
-    assert(console.log.calledWith('ReferenceError: d is not defined'.red, 'thrown from', 'b'.red + ':'));
+    assert(console.log.calledWith('ReferenceError: d is not defined'.red, 'thrown from', 'b'.red, 'in', './spec/markdown/reference_describe.md'.red + ':'));
     assert(console.log.calledWith('c = 20 * d;'.red));
 
     console.log('NOTE: Jasmine failure expected, watch for assertion failure!'.yellow);

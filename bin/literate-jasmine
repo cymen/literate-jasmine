@@ -1,14 +1,38 @@
 #!/usr/bin/env node
 
-var fs = require('fs'),
+var find = require('find'),
+    fs = require('fs'),
     jasmineNode = require('jasmine-node'),
     path = require('path'),
     parser = require(path.join(__dirname,'../src/parser')),
-    markdownFile = process.argv[2];
-
-var input = fs.readFileSync(markdownFile, 'utf8');
-var parserOutput = parser.parse(input);
+    markdownFile = process.argv[2],
+    files = [],
+    parserOutput = [];
 
 jasmine.getEnv().addReporter(new jasmineNode.TerminalVerboseReporter({color: true}));
-parserOutput.fn(describe);
-jasmine.getEnv().execute();
+
+var runJasmineOnFiles = function(files) {
+    files.forEach(function(fileName) {
+      if (fileName.indexOf('node_modules') === -1) {
+        var input = fs.readFileSync(fileName, 'utf8');
+        parserOutput.push(parser.parse(input, fileName));
+      }
+    });
+
+    describe('root', function() {
+      parserOutput.forEach(function(output) {
+        output.fn(describe);
+      });
+    });
+
+    jasmine.getEnv().execute();
+};
+
+if (markdownFile) {
+  files.push(markdownFile);
+  runJasmineOnFiles(files);
+} else {
+  find.file(/\.md$/i, process.cwd(), function(files) {
+    runJasmineOnFiles(files);
+  });
+}

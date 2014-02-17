@@ -16,7 +16,7 @@ console.log('NOTE: Jasmine failure expected, watch for assertion failure!'.yello
   }
 
   setTimeout(function() {
-    assert(console.log.calledWith('ReferenceError: xyz is not defined'.red, 'thrown from', 'a'.red + ':'));
+    assert(console.log.calledWith('ReferenceError: xyz is not defined'.red, 'thrown from', 'a'.red, 'in', './spec/markdown/reference_root.md'.red + ':'));
     assert(console.log.calledWith('var c = xyz;'.red));
 
     console.log('NOTE: Jasmine failure expected, watch for assertion failure!'.yellow);
