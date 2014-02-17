@@ -1,4 +1,5 @@
 var parser = require('../src/parser'),
+    fs = require('fs'),
     markdown = require('markdown').markdown;
 
 describe('parser', function() {

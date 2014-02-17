@@ -1,6 +1,7 @@
 require('jasmine-node');
 
-var markdown = require('markdown').markdown,
+var colors = require('colors'),
+    markdown = require('markdown').markdown,
     stackTraceParser = require('stack-trace-parser'),
     ROOT_LEVEL = 1,
     DESCRIBE_LEVEL = 2,
@@ -24,6 +25,23 @@ var getLevel = function(node) {
 };
 
 parser = {
+  displayEvalException: function(exception, name, code) {
+    var parsedStackTrace = stackTraceParser.parse(exception);
+    if (parsedStackTrace[0].isEval) {
+      console.log('\n');
+      console.log(exception.toString().red, 'thrown from', name.red + ':');
+      console.log('. . . . .');
+      var errorOnLineNumber = parsedStackTrace[0].evalLineNumber - 2;
+      code.split('\n').forEach(function(line, index) {
+        if (index == errorOnLineNumber) {
+          line = line.red;
+        }
+        console.log(line);
+      });
+      console.log('. . . . .\n');
+    }
+  },
+
   parse: function(text) {
     var tree = markdown.parse(text),
         root = tree[1],
@@ -103,14 +121,10 @@ parser = {
 
     it.fn = function() {
       try {
-        new Function(it.code)();
+        return new Function(it.code)();
       }
       catch (exception) {
-        var parsedStackTrace = stackTraceParser.parse(exception);
-        if (parsedStackTrace[0].isEval) {
-          console.log(it.code);
-          console.log('Error in code at', parsedStackTrace[0].evalLineNumber + ':' + parsedStackTrace[0].evalColumnNumber);
-        }
+        parser.displayEvalException(exception, it.name, it.code);
         throw exception;
       }
     }

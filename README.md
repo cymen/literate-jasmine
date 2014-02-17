@@ -14,7 +14,7 @@
 
     console.log(a, b, a + b);
 
-    expect(a + b + d).toBe(3);
+    expect(a + b).toBe(3);
 
 ### can divide numbers
 
