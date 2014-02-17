@@ -55,7 +55,15 @@ parser = {
     }
 
     complete.global = parser.parseCodeBlocks(tree, 1);
-    complete.globalFn = new Function(complete.global);
+    complete.globalFn = function() {
+      try {
+        return new Function(complete.global)();
+      }
+      catch (exception) {
+        parser.displayEvalException(exception, complete.name, complete.global);
+        throw exception;
+      }
+    }
 
     for (var i=2; i < tree.length; i++) {
       var node = tree[i];
@@ -85,7 +93,15 @@ parser = {
         };
 
     parsedDescribe.beforeEach = parser.parseCodeBlocks(tree, offset);
-    parsedDescribe.beforeEachFn = new Function(parsedDescribe.beforeEach);
+    parsedDescribe.beforeEachFn = function() {
+      try {
+        return new Function(parsedDescribe.beforeEach)();
+      }
+      catch (exception) {
+        parser.displayEvalException(exception, parsedDescribe.name, parsedDescribe.beforeEach);
+        throw exception;
+      }
+    };
 
     while (true) {
       offset += 1;
@@ -127,7 +143,7 @@ parser = {
         parser.displayEvalException(exception, it.name, it.code);
         throw exception;
       }
-    }
+    };
 
     return it;
   },
