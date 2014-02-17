@@ -8,7 +8,7 @@ var colors = require('colors'),
     IT_LEVEL = 3,
     parser;
 
-var doneRegExp = new RegExp(/\sdone()/);
+var runsDone = new RegExp(/\sdone()/);
 
 var isHeader = function(node) {
   return node[0] === 'header';
@@ -59,7 +59,7 @@ parser = {
   },
 
   run: function(name, code) {
-    if (doneRegExp.test(code)) {
+    if (runsDone.test(code)) {
       return function(done) { runExample(name, code); }
     } else {
       return function() { runExample(name, code); }
