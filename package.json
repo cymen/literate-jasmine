@@ -28,6 +28,7 @@
         "url": "https://github.com/cymen/literate-jasmine"
     },
     "scripts": {
-        "test": "node spec/integration.js && jasmine-node --forceexit spec && ./bin/literate-jasmine README.md"
+        "test": "jasmine-node --forceexit spec && ./bin/literate-jasmine README.md",
+        "integration": "node spec/integration.js"
     }
 }
