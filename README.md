@@ -42,7 +42,13 @@ block at the top of this describe (so right under "Mathematics").
 
     expect(text + "d").toBe("abcd");
 
+## Asynchronous
+### works with done
 
+    setTimeout(function() {
+      expect(true).toBe(true);
+      done();
+    }, 50);
 
 The file you are currently reading has a markdown structure (which includes
 the main header above and the other parts below) that is parsed into a tree:
@@ -54,6 +60,8 @@ the main header above and the other parts below) that is parsed into a tree:
     * calculates the circumference of a circle
   * Strings
     * appending works with +
+  * Asynchronous
+    * works with done
 
 Which is then uses the Jasmine `describe`, `it` and `beforeEach` to setup the
 tests and then run them.
