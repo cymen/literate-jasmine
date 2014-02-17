@@ -8,6 +8,10 @@ var colors = require('colors'),
     IT_LEVEL = 3,
     parser;
 
+var require = require('./proxy-require')({
+  path: 'node_modules'
+});
+
 var runsDone = new RegExp(/\sdone()/);
 
 var isHeader = function(node) {

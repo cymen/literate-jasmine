@@ -12,20 +12,20 @@ var find = require('find'),
 jasmine.getEnv().addReporter(new jasmineNode.TerminalVerboseReporter({color: true}));
 
 var runJasmineOnFiles = function(files) {
-    files.forEach(function(fileName) {
-      if (fileName.indexOf('node_modules') === -1) {
-        var input = fs.readFileSync(fileName, 'utf8');
-        parserOutput.push(parser.parse(input, fileName));
-      }
-    });
+  files.forEach(function(fileName) {
+    if (fileName.indexOf('node_modules') === -1) {
+      var input = fs.readFileSync(fileName, 'utf8');
+      parserOutput.push(parser.parse(input, fileName));
+    }
+  });
 
-    describe('root', function() {
-      parserOutput.forEach(function(output) {
-        output.fn(describe);
-      });
+  describe('root', function() {
+    parserOutput.forEach(function(output) {
+      output.fn(describe);
     });
+  });
 
-    jasmine.getEnv().execute();
+  jasmine.getEnv().execute();
 };
 
 if (markdownFile) {

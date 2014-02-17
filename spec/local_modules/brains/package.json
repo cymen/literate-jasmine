@@ -1,0 +1,12 @@
+{
+  "name": "brains",
+  "description": "some brains",
+  "version": "0.6.2",
+  "engines": {
+    "node": ">=0.1.90"
+  },
+  "main": "brains",
+  "readmeFilename": "ReadMe.md",
+  "_id": "brains@0.6.2",
+  "_from": "brains@0.6.2"
+}
