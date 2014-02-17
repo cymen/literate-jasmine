@@ -5,13 +5,13 @@ var assert = require('assert'),
 console.log('NOTE: Jasmine failure expected, watch for assertion failure!'.yellow);
 
 (function referenceErrorInIt() {
-  //sinon.spy(console, 'log');
+  sinon.spy(console, 'log');
   process.argv[2] = __dirname + '/markdown/reference_it_async.md';
   require('../bin/literate-jasmine');
 
   setTimeout(function() {
-    // assert(console.log.calledWith('ReferenceError: zz is not defined'.red, 'thrown from', 'c'.red, 'in', './spec/markdown/reference_it.md'.red + ':'));
-    // assert(console.log.calledWith('c = 2 * zz;'.red));
+    assert(console.log.calledWith('hello'));
+    assert(console.log.calledWith('inside'));
 
     console.log('NOTE: Jasmine failure expected, watch for assertion failure!'.yellow);
     console.log('\n');

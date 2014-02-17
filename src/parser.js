@@ -30,7 +30,7 @@ var makeFileNameRelative = function(fileName) {
   return fileName.replace(process.cwd(), '.');
 };
 
-var runExample = function(name, code) {
+var runExample = function(name, code, done) {
   try {
     return eval(code);
   } catch (exception) {
@@ -60,7 +60,7 @@ parser = {
 
   run: function(name, code) {
     if (runsDone.test(code)) {
-      return function(done) { runExample(name, code); }
+      return function(done) { runExample(name, code, done); }
     } else {
       return function() { runExample(name, code); }
     }
