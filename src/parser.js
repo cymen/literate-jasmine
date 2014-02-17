@@ -35,7 +35,7 @@ parser = {
       console.log('\n');
       console.log(exception.toString().red, 'thrown from', name.red, 'in', makeFileNameRelative(parser.fileName).red + ':');
       console.log('. . . . .');
-      var errorOnLineNumber = parsedStackTrace[0].evalLineNumber - 2;
+      var errorOnLineNumber = parsedStackTrace[0].evalLineNumber - 1;
       code.split('\n').forEach(function(line, index) {
         if (index == errorOnLineNumber) {
           line = line.red;
@@ -47,14 +47,27 @@ parser = {
   },
 
   run: function(name, code) {
-    return function() {
-      try {
-        return new Function(code)();
+    if (code.indexOf('done()') === -1) {
+      return function() {
+        try {
+          return eval(code);
+        }
+        catch (exception) {
+          parser.displayEvalException(exception, name, code);
+          exception.message += ' (' + makeFileNameRelative(parser.fileName) + ')';
+          throw exception;
+        }
       }
-      catch (exception) {
-        parser.displayEvalException(exception, name, code);
-        exception.message += ' (' + makeFileNameRelative(parser.fileName) + ')';
-        throw exception;
+    } else {
+      return function(done) {
+        try {
+          return eval(code);
+        }
+        catch (exception) {
+          parser.displayEvalException(exception, name, code);
+          exception.message += ' (' + makeFileNameRelative(parser.fileName) + ')';
+          throw exception;
+        }
       }
     }
   },

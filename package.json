@@ -1,7 +1,7 @@
 {
     "name": "literate-jasmine",
     "description": "write jasmine tests in markdown",
-    "version": "0.0.21",
+    "version": "0.0.22",
     "bin": {
       "literate-jasmine": "./bin/literate-jasmine"
     },
@@ -29,7 +29,8 @@
         "url": "https://github.com/cymen/literate-jasmine"
     },
     "scripts": {
-        "test": "jasmine-node --forceexit spec && ./bin/literate-jasmine README.md",
+        "test": "jasmine-node --forceexit spec",
+        "readme": "./bin/literate-jasmine README.md",
         "integration": "node spec/integration_it.js && node spec/integration_describe.js && node spec/integration_root.js"
     }
 }
