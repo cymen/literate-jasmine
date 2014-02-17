@@ -8,6 +8,8 @@ var colors = require('colors'),
     IT_LEVEL = 3,
     parser;
 
+var doneRegExp = new RegExp(/\sdone()/);
+
 var isHeader = function(node) {
   return node[0] === 'header';
 };
@@ -28,6 +30,16 @@ var makeFileNameRelative = function(fileName) {
   return fileName.replace(process.cwd(), '.');
 };
 
+var runExample = function(name, code) {
+  try {
+    return eval(code);
+  } catch (exception) {
+    parser.displayEvalException(exception, name, code);
+    exception.message += ' (' + makeFileNameRelative(parser.fileName) + ')';
+    throw exception;
+  }
+}
+
 parser = {
   displayEvalException: function(exception, name, code) {
     var parsedStackTrace = stackTraceParser.parse(exception);
@@ -47,28 +59,10 @@ parser = {
   },
 
   run: function(name, code) {
-    if (code.indexOf('done()') === -1) {
-      return function() {
-        try {
-          return eval(code);
-        }
-        catch (exception) {
-          parser.displayEvalException(exception, name, code);
-          exception.message += ' (' + makeFileNameRelative(parser.fileName) + ')';
-          throw exception;
-        }
-      }
+    if (doneRegExp.test(code)) {
+      return function(done) { runExample(name, code); }
     } else {
-      return function(done) {
-        try {
-          return eval(code);
-        }
-        catch (exception) {
-          parser.displayEvalException(exception, name, code);
-          exception.message += ' (' + makeFileNameRelative(parser.fileName) + ')';
-          throw exception;
-        }
-      }
+      return function() { runExample(name, code); }
     }
   },
 
