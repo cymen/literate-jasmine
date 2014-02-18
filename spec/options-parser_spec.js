@@ -1,4 +1,4 @@
-var opts = require('../src/options_parser'),
+var opts = require('../src/options-parser'),
     path = require('path');
 
 describe('options parser', function() {
