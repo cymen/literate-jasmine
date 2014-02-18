@@ -31,6 +31,7 @@
     "scripts": {
         "test": "jasmine-node --forceexit spec",
         "readme": "./bin/literate-jasmine README.md",
-        "integration": "node spec/integration_spec.js"
+        "integration": "node spec/integration_spec.js",
+        "suite": "npm test && npm run integration"
     }
 }

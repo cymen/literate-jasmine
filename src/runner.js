@@ -2,19 +2,18 @@ var find = require('find'),
     fs = require('fs'),
     jasmineNode = require('jasmine-node'),
     parser = require('./parser'),
-    _ = require('lodash'),
-    parserOutput = [];
+    _ = require('lodash');
 
 function runJasmineOnFiles(files) {
-  files.forEach(function(fileName) {
+  var parserOutput = _(files).map(function(fileName) {
     if (!_.contains(fileName, 'node_modules')) {
       var input = fs.readFileSync(fileName, 'utf8');
-      parserOutput.push(parser.parse(input, fileName));
+      return parser.parse(input, fileName);
     }
-  });
+  }).compact().value();
 
   describe('root', function() {
-    parserOutput.forEach(function(output) {
+    _.each(parserOutput, function(output) {
       output.fn(describe);
     });
   });
