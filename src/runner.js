@@ -5,7 +5,7 @@ var find = require('find'),
     _ = require('lodash'),
     parserOutput = [];
 
-var runJasmineOnFiles = function(files) {
+function runJasmineOnFiles(files) {
   files.forEach(function(fileName) {
     if (!_.contains(fileName, 'node_modules')) {
       var input = fs.readFileSync(fileName, 'utf8');
@@ -22,25 +22,25 @@ var runJasmineOnFiles = function(files) {
   jasmine.getEnv().execute();
 };
 
-var runner = {
-
-  run: function(targetPath) {
-    jasmine.getEnv().addReporter(new jasmineNode.TerminalVerboseReporter({color: true}));
-
-    if (targetPath && fs.lstatSync(targetPath).isFile()) {
-      runJasmineOnFiles([targetPath]);
+function getSources(paths) {
+  return _(paths).map(function(path) {
+    if (path && fs.lstatSync(path).isFile()) {
+      return path;
     } else {
-      var dir = targetPath || process.cwd();
-      find.file(/\.md$/i, dir, function(files) {
-        if(files.length > 0) {
-          runJasmineOnFiles(files);
-        } else {
-          console.log("No examples found: ", targetPath);
-        }
-      });
+      return find.fileSync(/\.md$/i, path);
     }
-  }
+  }).flatten();
+}
 
+var runner = function(options) {
+  this.options = options;
+  this.reporter = options.isVerbose ? jasmineNode.TerminalVerboseReporter :
+    jasmineNode.TerminalReporter;
+
+  this.run = function() {
+    jasmine.getEnv().addReporter(new this.reporter({color: options.color}));
+    runJasmineOnFiles(getSources(options.paths));
+  }
 };
 
 module.exports = runner;

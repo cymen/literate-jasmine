@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 var path = require('path'),
-    targetPath = process.argv[2],
-    runner = require(path.join(__dirname,'../src/runner'));
+    optionsParser = require(path.join(__dirname,'../src/options_parser')),
+    Runner = require(path.join(__dirname,'../src/runner')),
+    options = optionsParser.parse(process.argv.slice(2));
 
-runner.run(targetPath);
+new Runner(options).run();
