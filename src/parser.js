@@ -5,8 +5,7 @@ var colors = require('colors'),
     errorReporter = require('./error-reporter'),
     ROOT_LEVEL = 1,
     DESCRIBE_LEVEL = 2,
-    IT_LEVEL = 3,
-    parser;
+    SPEC_LEVEL = 3;
 
 var require = require('./proxy-require')({
   path: 'node_modules'
@@ -14,40 +13,42 @@ var require = require('./proxy-require')({
 
 var runsDone = new RegExp(/\sdone()/);
 
-var isHeader = function(node) {
+function isAsync(code) {
+  return runsDone.test(code);
+}
+
+function isHeader(node) {
   return node[0] === 'header';
 };
 
-var isCodeBlock = function(node) {
+function isCodeBlock(node) {
   return node[0] === 'code_block';
 };
 
-var getName = function(node) {
+function getName(node) {
   return node[2];
 };
 
-var getLevel = function(node) {
+function getLevel(node) {
   return node[1].level;
 };
 
-var runExample = function(name, code, done) {
+function runExample(fileName, name, code, done) {
   try {
     return eval(code);
   } catch (exception) {
-    throw errorReporter.display(parser.fileName, exception, name, code);
+    throw errorReporter.display(fileName, exception, name, code);
   }
 }
 
-parser = {
-  run: function(name, code) {
-    if (runsDone.test(code)) {
-      return function(done) { runExample(name, code, done); }
-    } else {
-      return function() { runExample(name, code); }
-    }
-  },
+function validNode(node, type, level) {
+  return node[0] === type && node[1].level === level;
+};
 
-  parse: function(text, fileName) {
+var Parser = function(fileName) {
+  this.fileName = fileName;
+
+  this.parse = function(text) {
     var tree = markdown.parse(text),
         root = tree[1],
         complete = {
@@ -55,19 +56,17 @@ parser = {
           describes: []
         };
 
-    this.fileName = fileName;
-
-    if (!parser.validNode(root, 'header', ROOT_LEVEL)) {
+    if (!validNode(root, 'header', ROOT_LEVEL)) {
       return;
     }
 
-    complete.global = parser.parseCodeBlocks(tree, 1);
-    complete.globalFn = parser.run(complete.name, complete.global);
+    complete.global   = this.parseCodeBlocks(tree, 1);
+    complete.globalFn = this.run(complete.name, complete.global);
 
     for (var i = 2; i < tree.length; i++) {
       var node = tree[i];
-      if (parser.validNode(node, 'header', DESCRIBE_LEVEL)) {
-        complete.describes.push(parser.parseDescribe(tree, i));
+      if (validNode(node, 'header', DESCRIBE_LEVEL)) {
+        complete.describes.push(this.parseDescribe(tree, i));
       }
     }
 
@@ -82,56 +81,65 @@ parser = {
     };
 
     return complete;
-  },
+  };
 
-  parseDescribe: function(tree, offset) {
+  this.run = function(name, code) {
+    var fileName = this.fileName;
+    if (isAsync(code)) {
+      return function(done) { runExample(fileName, name, code, done); }
+    } else {
+      return function() { runExample(fileName, name, code); }
+    }
+  };
+
+  this.parseDescribe = function(tree, offset) {
     var node = tree[offset],
         parsedDescribe = {
           name: getName(node),
-          it: []
+          spec: []
         };
 
-    parsedDescribe.beforeEach = parser.parseCodeBlocks(tree, offset);
-    parsedDescribe.beforeEachFn = parser.run(parsedDescribe.name, parsedDescribe.beforeEach);
+    parsedDescribe.beforeEach   = this.parseCodeBlocks(tree, offset);
+    parsedDescribe.beforeEachFn = this.run(parsedDescribe.name, parsedDescribe.beforeEach);
 
     while (true) {
       offset += 1;
       var child = tree[offset];
 
-      if (!child || isHeader(child) && getLevel(child) < IT_LEVEL) {
+      if (!child || isHeader(child) && getLevel(child) < SPEC_LEVEL) {
         break;
       }
 
-      if (parser.validNode(child, 'header', IT_LEVEL)) {
-        parsedDescribe.it.push(parser.parseIt(tree, offset));
+      if (validNode(child, 'header', SPEC_LEVEL)) {
+        parsedDescribe.spec.push(this.parseSpec(tree, offset));
       }
     }
 
-    parsedDescribe.fn = function(itFn) {
-      itFn = itFn || it;
+    parsedDescribe.fn = function(specFn) {
+      specFn = specFn || it;
       beforeEach(parsedDescribe.beforeEachFn);
-      parsedDescribe.it.forEach(function(parsedIt) {
-        itFn(parsedIt.name, parsedIt.fn);
+      parsedDescribe.spec.forEach(function(parsedSpec) {
+        specFn(parsedSpec.name, parsedSpec.fn);
       });
     };
 
     return parsedDescribe;
-  },
+  };
 
-  parseIt: function(tree, offset) {
+  this.parseSpec = function(tree, offset) {
     var node = tree[offset],
-        it = {
+        spec = {
           name: getName(node)
         };
 
-    it.code = parser.parseCodeBlocks(tree, offset);
-    it.fn = parser.run(it.name, it.code);
+    spec.code = this.parseCodeBlocks(tree, offset);
+    spec.fn   = this.run(spec.name, spec.code);
 
-    return it;
-  },
+    return spec;
+  };
 
-  parseCodeBlocks: function(tree, offset) {
-    var code_blocks = [];
+  this.parseCodeBlocks = function(tree, offset) {
+    var codeBlocks = [];
 
     while (true) {
       offset += 1;
@@ -142,16 +150,12 @@ parser = {
       }
 
       if (isCodeBlock(child)) {
-        code_blocks.push(child[1]);
+        codeBlocks.push(child[1]);
       }
     }
 
-    return code_blocks.join('\n');
-  },
-
-  validNode: function(node, type, level) {
-    return node[0] === type && node[1].level === level;
-  }
+    return codeBlocks.join('\n');
+  };
 };
 
-module.exports = parser;
+module.exports = Parser;

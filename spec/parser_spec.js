@@ -1,8 +1,12 @@
-var parser = require('../src/parser'),
+var Parser = require('../src/parser'),
     fs = require('fs'),
     markdown = require('markdown').markdown;
 
 describe('parser', function() {
+  beforeEach(function() {
+    parser = new Parser("fileName");
+  });
+
   describe('code block(s)', function() {
     it('parses out the code block', function() {
         var text = [
@@ -76,20 +80,20 @@ describe('parser', function() {
     });
 
     it('parses out the name', function() {
-        var parsedIt = parser.parseIt(tree, 1);
+        var parsedIt = parser.parseSpec(tree, 1);
 
         expect(parsedIt.name).toBe('it 1');
     });
 
     it('parses out the code', function() {
-        var parsedIt = parser.parseIt(tree, 1);
+        var parsedIt = parser.parseSpec(tree, 1);
 
         expect(parsedIt.code).toBe('var x = 10;\nconsole.log("x", x);\nexpect(x).toBe(10);');
     });
 
     it('adds a function call to run the code', function() {
         spyOn(console, 'log');
-        var parsedIt = parser.parseIt(tree, 1);
+        var parsedIt = parser.parseSpec(tree, 1);
 
         parsedIt.fn();
 
@@ -130,7 +134,7 @@ describe('parser', function() {
     it('parsers out the it blocks', function() {
         var parsedDescribe = parser.parseDescribe(tree, 1);
 
-        expect(parsedDescribe.it.length).toBe(1);
+        expect(parsedDescribe.spec.length).toBe(1);
     });
 
     it('parses out any code blocks before the it as a beforeEach', function() {

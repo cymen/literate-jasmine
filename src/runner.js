@@ -8,7 +8,7 @@ function runJasmineOnFiles(files) {
   var parserOutput = _(files).map(function(fileName) {
     if (!_.contains(fileName, 'node_modules')) {
       var input = fs.readFileSync(fileName, 'utf8');
-      return parser.parse(input, fileName);
+      return new parser(fileName).parse(input);
     }
   }).compact().value();
 
