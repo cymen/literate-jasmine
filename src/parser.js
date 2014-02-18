@@ -2,7 +2,7 @@ require('jasmine-node');
 
 var colors = require('colors'),
     markdown = require('markdown').markdown,
-    stackTraceParser = require('stack-trace-parser'),
+    errorReporter = require('./error-reporter'),
     ROOT_LEVEL = 1,
     DESCRIBE_LEVEL = 2,
     IT_LEVEL = 3,
@@ -30,38 +30,15 @@ var getLevel = function(node) {
   return node[1].level;
 };
 
-var makeFileNameRelative = function(fileName) {
-  return fileName.replace(process.cwd(), '.');
-};
-
 var runExample = function(name, code, done) {
   try {
     return eval(code);
   } catch (exception) {
-    parser.displayEvalException(exception, name, code);
-    exception.message += ' (' + makeFileNameRelative(parser.fileName) + ')';
-    throw exception;
+    throw errorReporter.display(parser.fileName, exception, name, code);
   }
 }
 
 parser = {
-  displayEvalException: function(exception, name, code) {
-    var parsedStackTrace = stackTraceParser.parse(exception);
-    if (parsedStackTrace[0].isEval) {
-      console.log('\n');
-      console.log(exception.toString().red, 'thrown from', name.red, 'in', makeFileNameRelative(parser.fileName).red + ':');
-      console.log('. . . . .');
-      var errorOnLineNumber = parsedStackTrace[0].evalLineNumber - 1;
-      code.split('\n').forEach(function(line, index) {
-        if (index == errorOnLineNumber) {
-          line = line.red;
-        }
-        console.log(line);
-      });
-      console.log('. . . . .\n');
-    }
-  },
-
   run: function(name, code) {
     if (runsDone.test(code)) {
       return function(done) { runExample(name, code, done); }
@@ -87,7 +64,7 @@ parser = {
     complete.global = parser.parseCodeBlocks(tree, 1);
     complete.globalFn = parser.run(complete.name, complete.global);
 
-    for (var i=2; i < tree.length; i++) {
+    for (var i = 2; i < tree.length; i++) {
       var node = tree[i];
       if (parser.validNode(node, 'header', DESCRIBE_LEVEL)) {
         complete.describes.push(parser.parseDescribe(tree, i));

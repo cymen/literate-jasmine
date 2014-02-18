@@ -4,6 +4,7 @@ var fs = require('fs'),
 
 module.exports = function(config) {
   localModules = config.path;
+
   return function(name) {
     var path = process.cwd() + '/' + localModules + '/' + name;
 
