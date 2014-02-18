@@ -2,27 +2,21 @@ var opts = require('../src/options_parser'),
     path = require('path');
 
 describe('options parser', function() {
-  var binFile = path.join(process.cwd(), 'bin', 'literate-jasmine');
 
   it('identifies a verbose flag', function() {
-    var args = [ '--verbose' ],
-      result = opts.parse(args);
+    var args = [ '--verbose' ];
 
-    expect(result.isVerbose).toBe(true);
+    expect(opts.parse(args).isVerbose).toBe(true);
   });
 
   it('returns false if no verbose flag is provided', function() {
-    var args = [],
-        result = opts.parse(args);
-
-    expect(result.isVerbose).toBe(false);
+    expect(opts.parse([]).isVerbose).toBe(false);
   });
 
   it('gives a list of paths for runner to execute', function() {
-    var args = [ "first-path", "second-path" ],
-        result = opts.parse(args);
+    var args = [ "first-path", "second-path" ];
 
-    expect(result.paths).toEqual([
+    expect(opts.parse(args).paths).toEqual([
       "first-path",
       "second-path"
     ]);
@@ -41,7 +35,6 @@ describe('options parser', function() {
   });
 
   it('defaults color to true', function() {
-    var args = [];
-    expect(opts.parse(args).color).toBe(true);
+    expect(opts.parse([]).color).toBe(true);
   });
 });
