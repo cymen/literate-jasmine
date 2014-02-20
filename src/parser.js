@@ -86,9 +86,13 @@ var Parser = function(fileName) {
   this.run = function(name, code) {
     var fileName = this.fileName;
     if (isAsync(code)) {
-      return function(done) { runExample(fileName, name, code, done); }
+      return function(done) {
+        runExample(fileName, name, code, done);
+      };
     } else {
-      return function() { runExample(fileName, name, code); }
+      return function() {
+        runExample(fileName, name, code);
+      };
     }
   };
 
