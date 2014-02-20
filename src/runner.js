@@ -12,7 +12,7 @@ function runJasmineOnFiles(files) {
     }
   }).compact().value();
 
-  describe('root', function() {
+  describe('all', function() {
     _.each(parserOutput, function(output) {
       output.fn(describe);
     });
