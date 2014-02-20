@@ -64,11 +64,17 @@ the main header above and the other parts below) that is parsed into a tree:
 Which is then uses the Jasmine `describe`, `it` and `beforeEach` to setup the
 tests and then run them.
 
-**Note that there is a convention -- a hard rule that
-there will be a top header (top describe), one or more headers below that
-(describes) and one or more header below each of those (it blocks).***
+**Note that there is a convention -- a hard rule that there will be a top header
+(top describe), one or more headers below that (describes) and one or more header
+below each of those (it blocks).***
 
 ![screen shot of convention](convention.png)
+
+This hard limitation makes sense:
+* forces documentation to be simple
+* nested describes indicate that extracted some code to helper functions is probably a sensible solution instead of adding more nesting
+* easier to parse both as a human and as a computer
+* keeps everything simple
 
 
 `literate-jasmine README.md`
