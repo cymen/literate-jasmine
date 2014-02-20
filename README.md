@@ -66,7 +66,7 @@ tests and then run them. **Note that there is a convention -- a hard rule that
 there will be a top header (top describe), one or more headers below that
 (describes) and one or more header below each of those (it blocks).***
 
-(convention.png)
+[screen shot of convention](convention.png)
 
 
 `literate-jasmine README.md`
