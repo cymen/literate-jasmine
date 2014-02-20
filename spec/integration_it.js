@@ -6,12 +6,15 @@ console.log('NOTE: Jasmine failure expected, watch for assertion failure!'.yello
 
 (function referenceErrorInIt() {
   sinon.spy(console, 'log');
+  sinon.stub(process, 'exit');
+
   process.argv[2] = __dirname + '/markdown/reference_it.md';
   require('../bin/literate-jasmine');
 
   setTimeout(function() {
-    assert(console.log.calledWith('ReferenceError: zz is not defined'.red, 'thrown from', 'c'.red, 'in', './spec/markdown/reference_it.md'.red + ':'));
-    assert(console.log.calledWith('c = 2 * zz;'.red));
+    assert(console.log.calledWith('c = 2 * zz;'.yellow + '\t' + "// ERROR: 'zz' is not defined.".red));
+    assert(console.log.calledWith('Parsed code failed to pass JSHint. Please correct errors indicated above.'.red));
+    assert(process.exit.calledWith(1));
 
     console.log('NOTE: Jasmine failure expected, watch for assertion failure!'.yellow);
     console.log('\n');

@@ -1,6 +1,8 @@
 require('jasmine-node');
 
-var colors = require('colors'),
+var _ = require('lodash'),
+    colors = require('colors'),
+    linter = require('./linter'),
     markdown = require('markdown').markdown,
     errorReporter = require('./error-reporter'),
     ROOT_LEVEL = 1,
@@ -52,8 +54,9 @@ var Parser = function(fileName) {
     var tree = markdown.parse(text),
         root = tree[1],
         complete = {
-          name: getName(root),
-          describes: []
+          isRoot: true,
+          describes: [],
+          name: getName(root)
         };
 
     if (!validNode(root, 'header', ROOT_LEVEL)) {
@@ -66,7 +69,7 @@ var Parser = function(fileName) {
     for (var i = 2; i < tree.length; i++) {
       var node = tree[i];
       if (validNode(node, 'header', DESCRIBE_LEVEL)) {
-        complete.describes.push(this.parseDescribe(tree, i));
+        complete.describes.push(this.parseDescribe(tree, i, complete));
       }
     }
 
@@ -83,8 +86,20 @@ var Parser = function(fileName) {
     return complete;
   };
 
-  this.run = function(name, code) {
-    var fileName = this.fileName;
+  this.run = function(name, code, codeBefore) {
+    var fileName = this.fileName,
+        codeToLint = [
+          codeBefore,
+          code
+        ].join('\n\n');
+
+    if (!linter(codeToLint)) {
+      console.log();
+      console.log('Parsed code failed to pass JSHint. Please correct errors indicated above.'.red);
+      process.exit(1);
+      return _.noop;
+    }
+
     if (isAsync(code)) {
       return function(done) {
         runExample(fileName, name, code, done);
@@ -96,15 +111,16 @@ var Parser = function(fileName) {
     }
   };
 
-  this.parseDescribe = function(tree, offset) {
+  this.parseDescribe = function(tree, offset, parent) {
     var node = tree[offset],
         parsedDescribe = {
           name: getName(node),
+          parent: parent,
           spec: []
         };
 
     parsedDescribe.beforeEach   = this.parseCodeBlocks(tree, offset);
-    parsedDescribe.beforeEachFn = this.run(parsedDescribe.name, parsedDescribe.beforeEach);
+    parsedDescribe.beforeEachFn = this.run(parsedDescribe.name, parsedDescribe.beforeEach, parent.global);
 
     while (true) {
       offset += 1;
@@ -115,7 +131,7 @@ var Parser = function(fileName) {
       }
 
       if (validNode(child, 'header', SPEC_LEVEL)) {
-        parsedDescribe.spec.push(this.parseSpec(tree, offset));
+        parsedDescribe.spec.push(this.parseSpec(tree, offset, parsedDescribe));
       }
     }
 
@@ -130,14 +146,18 @@ var Parser = function(fileName) {
     return parsedDescribe;
   };
 
-  this.parseSpec = function(tree, offset) {
+  this.parseSpec = function(tree, offset, parent) {
     var node = tree[offset],
+        codeBefore,
         spec = {
-          name: getName(node)
+          name: getName(node),
+          parent: parent
         };
 
+    codeBefore = [parent.parent.global, parent.beforeEach].join('\n\n');
+
     spec.code = this.parseCodeBlocks(tree, offset);
-    spec.fn   = this.run(spec.name, spec.code);
+    spec.fn   = this.run(spec.name, spec.code, codeBefore);
 
     return spec;
   };

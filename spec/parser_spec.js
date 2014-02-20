@@ -61,7 +61,9 @@ describe('parser', function() {
 
   describe('it block', function() {
     var text,
-        tree;
+        tree,
+        parsedDescribe,
+        parsedRoot;
 
     beforeEach(function() {
         text = [
@@ -77,23 +79,32 @@ describe('parser', function() {
           ''
         ].join('\n');
         tree = markdown.parse(text);
+
+        parsedRoot = {
+          global: ''
+        };
+
+        parsedDescribe = {
+          parent: parsedRoot,
+          beforeEach: ''
+        };
     });
 
     it('parses out the name', function() {
-        var parsedIt = parser.parseSpec(tree, 1);
+        var parsedIt = parser.parseSpec(tree, 1, parsedDescribe);
 
         expect(parsedIt.name).toBe('it 1');
     });
 
     it('parses out the code', function() {
-        var parsedIt = parser.parseSpec(tree, 1);
+        var parsedIt = parser.parseSpec(tree, 1, parsedDescribe);
 
         expect(parsedIt.code).toBe('var x = 10;\nconsole.log("x", x);\nexpect(x).toBe(10);');
     });
 
     it('adds a function call to run the code', function() {
         spyOn(console, 'log');
-        var parsedIt = parser.parseSpec(tree, 1);
+        var parsedIt = parser.parseSpec(tree, 1, parsedDescribe);
 
         parsedIt.fn();
 
@@ -103,7 +114,8 @@ describe('parser', function() {
 
   describe('describe block', function() {
     var text,
-        tree;
+        tree,
+        parsedRoot;
 
     beforeEach(function() {
         text = [
@@ -123,28 +135,37 @@ describe('parser', function() {
           ''
         ].join('\n');
         tree = markdown.parse(text);
+
+        parsedRoot = {
+          global: 'var someGlobal;'
+        };
+
+        parsedDescribe = {
+          parent: parsedRoot,
+          beforeEach: ''
+        };
     });
 
     it('parses the describe name', function() {
-        var parsedDescribe = parser.parseDescribe(tree, 1);
+        var parsedDescribe = parser.parseDescribe(tree, 1, parsedRoot);
 
         expect(parsedDescribe.name).toBe('can set a variable to a number');
     });
 
     it('parsers out the it blocks', function() {
-        var parsedDescribe = parser.parseDescribe(tree, 1);
+        var parsedDescribe = parser.parseDescribe(tree, 1, parsedRoot);
 
         expect(parsedDescribe.spec.length).toBe(1);
     });
 
     it('parses out any code blocks before the it as a beforeEach', function() {
-        var parsedDescribe = parser.parseDescribe(tree, 1);
+        var parsedDescribe = parser.parseDescribe(tree, 1, parsedRoot);
 
         expect(parsedDescribe.beforeEach).toContain('someGlobal = 42;');
     });
 
     it('adds a function call to run the beforeEach', function() {
-        var parsedDescribe = parser.parseDescribe(tree, 1);
+        var parsedDescribe = parser.parseDescribe(tree, 1, parsedRoot);
         someGlobal = 21;
 
         parsedDescribe.beforeEachFn();
@@ -154,7 +175,7 @@ describe('parser', function() {
 
     it('adds a function call to run each it within the describe', function() {
         var itSpy = jasmine.createSpy('it'),
-            parsedDescribe = parser.parseDescribe(tree, 1);
+            parsedDescribe = parser.parseDescribe(tree, 1, parsedRoot);
 
         parsedDescribe.fn(itSpy);
 
@@ -171,7 +192,6 @@ describe('parser', function() {
           '# my title here',
           '',
           '    var someGlobal = 21;',
-          '    someOtherRealGlobal = 500;',
           '',
           '## can set a variable to a number',
           '### it 1',
@@ -210,12 +230,9 @@ describe('parser', function() {
     });
 
     it('adds a function to call for global setup', function() {
-        someOtherRealGlobal = -5;
         var result = parser.parse(text);
 
-        result.globalFn();
-
-        expect(someOtherRealGlobal).toBe(500);
+        expect(typeof result.globalFn).toBe('function');
     });
 
     it('adds a function call to run each describe within the root describe', function() {
