@@ -62,7 +62,9 @@ the main header above and the other parts below) that is parsed into a tree:
     * works with done
 
 Which is then uses the Jasmine `describe`, `it` and `beforeEach` to setup the
-tests and then run them. **Note that there is a convention -- a hard rule that
+tests and then run them.
+
+**Note that there is a convention -- a hard rule that
 there will be a top header (top describe), one or more headers below that
 (describes) and one or more header below each of those (it blocks).***
 
